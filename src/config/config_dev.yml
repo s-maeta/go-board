@@ -1,0 +1,15 @@
+db:
+  type: "mysql"
+  host: "board_db"
+  port: 3306
+  charset: "utf8mb4"
+  parseTime: true
+  loc: "Local"
+migrate:
+  filePath: "file://database/migrate"
+auth:
+  secretKey: "b1raVKAzDz0CyqHKl8mQHMcFKr7MtDQa4VF9NPLR5wY="
+  tokenLifetime: 1000000
+mail:
+  host: "mailhog"
+  port: 1025

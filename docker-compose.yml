@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  api:
+    container_name: board_api
+    build:
+      context: .
+      dockerfile: ./src/docker/dev/Dockerfile
+    env_file:
+      - ./.env
+    command: air -c .air.toml
+    volumes:
+      - ./src:/backend/src
+    tty: true
+    stdin_open: true
+    ports:
+      - "3001:3001"
+  # Webサーバーに関する設定
+  web:
+    container_name: board_web
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    volumes:
+      - ./nginx/log:/var/log/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+  db:
+    container_name: board_db
+    image: mysql:8.1.0
+    environment:
+      TZ: ${TZ}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: "root"
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+  # メールサーバー
+  mail:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"
+    # environment:
+    #   MH_STORAGE: maildir
+    #   MH_MAILDIR_PATH: /tmp
+    # volumes:
+    #   - maildir:/tmp
