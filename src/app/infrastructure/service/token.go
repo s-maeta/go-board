@@ -2,12 +2,14 @@ package service
 
 import (
 	"board/config"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func GenerateToken(userId string) (string, error) {
+	fmt.Printf("userid:%s", userId)
 	// configファイルからシークレットキーを取得する
 	config := config.GetConfig()
 	secretKey := config.Auth.SecretKey

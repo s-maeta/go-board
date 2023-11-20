@@ -6,7 +6,11 @@ type Password string
 
 func NewPassword(password string) (*Password, error) {
 	//セキュリティに関する暗号化複合化はドメイン知識とするべきなのか検討中、、、、
-	newPassword := Password(password)
-	service.Encrypt(string(newPassword))
+	encryptPassword, err := service.Encrypt(password)
+	if err != nil {
+		return nil, err
+	}
+	newPassword := Password(encryptPassword)
+
 	return &newPassword, nil
 }

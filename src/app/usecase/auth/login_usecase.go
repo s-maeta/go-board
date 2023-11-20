@@ -6,6 +6,7 @@ import (
 	"board/app/infrastructure/service"
 	authRequest "board/app/interface/request/auth"
 	authResponse "board/app/interface/response/auth"
+	"errors"
 )
 
 type LoginUseCase struct {
@@ -20,14 +21,17 @@ func NewLoginUseCase() *LoginUseCase {
 
 func (useCase *LoginUseCase) Execute(params *authRequest.LoginRequest) (*authResponse.LoginResponse, error) {
 
-	// ユーザー存在チェック
-	user := useCase.UserRepository.FindForLoginUser(
+	user := useCase.UserRepository.FindForEmail(
 		user.Email(params.Email),
-		user.Password(params.Password),
 	)
 
-	//仮登録ユーザーを削除する。
+	//パスワード一致チェック
+	isVerifyPassword := service.VerifyPassword(params.Password, string(user.Password))
+	if !isVerifyPassword {
+		return nil, errors.New("パスワード認証に失敗しました。")
+	}
 
+	// トークン生成
 	token, err := service.GenerateToken(string(user.UniqueId))
 	if err != nil {
 		return nil, err

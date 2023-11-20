@@ -8,6 +8,7 @@ import (
 	"board/app/interface/controller/user"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
@@ -19,9 +20,31 @@ func Init() {
 	userCreateController := user.NewUserCreateController()
 	userRegisterController := *user.NewUserRegisterController()
 	authController := auth.NewLoginController()
-articleCreateController := article.NewCreateController()
+	articleCreateController := article.NewCreateController()
+
 	//GINのデフォルトバリデーション（go-playground）を独自バリデーションに上書き
 	binding.Validator = service.NewOzzoValidator()
+
+	//CORSの設定
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"http://localhost:3000",
+		},
+		AllowMethods: []string{
+			"POST",
+			"GET",
+			"OPTIONS",
+		},
+		// 許可したいHTTPリクエストヘッダ
+		AllowHeaders: []string{
+			"Access-Control-Allow-Credentials",
+			"Access-Control-Allow-Headers",
+			"Content-Type",
+			"Content-Length",
+			"Accept-Encoding",
+			"Authorization",
+		},
+	}))
 
 	//ルーティングがなかった場合のルート
 	router.NoRoute(func(ctx *gin.Context) {
@@ -38,11 +61,11 @@ articleCreateController := article.NewCreateController()
 
 	router.Use(middleware.LoginCheckMiddleware)
 
-	router.GET("user/", func(ctx *gin.Context) { ctx.JSON(200,gin.H{"message":"test",})})
+	router.GET("user/", func(ctx *gin.Context) { ctx.JSON(200, gin.H{"message": "test"}) })
 
-	article :=router.Group("/article")
+	article := router.Group("/article")
 	{
-		article.POST("create",articleCreateController.Handler)
+		article.POST("/create", articleCreateController.Handler)
 	}
 
 	router.Run(":3001")

@@ -5,4 +5,5 @@ type IUserRepository interface {
 	Delete(user *User) error
 	FindForLoginUser(email Email, password Password) *User
 	FindForUniqueId(uniqueId string) *User
+	FindForEmail(email Email) *User
 }

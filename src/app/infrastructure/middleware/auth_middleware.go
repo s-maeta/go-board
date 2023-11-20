@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"board/app/infrastructure/repository"
 	"board/config"
 	"net/http"
 	"strings"
@@ -58,22 +59,26 @@ func LoginCheckMiddleware(c *gin.Context) {
 				c.JSON(http.StatusUnauthorized, gin.H{"errors": "Token has expired"})
 				return
 			}
-			// 解析に成功したら、ユーザIDを取り出す
-			// if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			// // 解析に成功したら、ユーザIDを取り出す
 			// 	userIDStr := claims["sub"].(string)
 			// 	// ユーザIDを使って新しいトークンを取り出す（有効期限切れ対策）
 			// 	newToken, err := service.GenerateToken(userIDStr)
-			// 	if err == nil {
-			// 		// ユーザの情報を取り出す
-			// 		userRepository := repository.NewUserRepository()
-			// 		user := userRepository.FindForUniqueId(userIDStr)
-			// 		if err == nil {
-			// 			// 新しいトークンとユーザの情報をコンテキストに保存
-			// 			c.Set("user", user)
-			// 			c.Set("token", newToken)
-			// 		}
-			// 	}
-			// }
+			// ユーザーIDを取得
+			userID, ok := claims["user_id"].(string)
+			if !ok {
+				c.JSON(http.StatusUnauthorized, gin.H{"errors": "User ID not found in token"})
+				return
+			}
+			// ユーザの情報を取り出す
+			userRepository := repository.NewUserRepository()
+			user := userRepository.FindForUniqueId(userID)
+			if user == nil {
+				c.JSON(http.StatusUnauthorized, gin.H{"errors": "User is not found"})
+				return
+			}
+			// 新しいトークンとユーザの情報をコンテキストに保存
+			// c.Set("token", newToken)
+			c.Set("user", user)
 		}
 	}
 	c.Next()

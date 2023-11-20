@@ -38,24 +38,20 @@ func (repository *UserRepository) Delete(user *userModel.User) error {
 
 func (repository *UserRepository) FindForLoginUser(email userModel.Email, password userModel.Password) *userModel.User {
 	var userDto dto.UserDto
-	result := repository.db.Where("password = ?", password).Where("email = ?", email).First(&userDto)
+	err := repository.db.Where("password = ?", password).Where("email = ?", email).First(&userDto).Error
 
-	if result.Error == gorm.ErrRecordNotFound {
-		return nil
+	if err == gorm.ErrRecordNotFound {
+		user := userDto.ToEntity()
+		return &user
 	}
-	// if result.Error != nil {
-	// 	panic("SQL Error")
-	// }
-
 	user := userDto.ToEntity()
-
 	return &user
 }
 
 func (repository *UserRepository) FindForUniqueId(uniqueId string) *userModel.User {
 	var userDto dto.UserDto
 
-	result := repository.db.Where("unique_id = ?", uniqueId).First(*&userDto)
+	result := repository.db.Where("unique_id = ?", uniqueId).First(&userDto)
 
 	if result.Error != nil {
 		return nil
@@ -63,4 +59,16 @@ func (repository *UserRepository) FindForUniqueId(uniqueId string) *userModel.Us
 	user := userDto.ToEntity()
 	return &user
 
+}
+
+func (repository *UserRepository) FindForEmail(email userModel.Email) *userModel.User {
+	var userDto dto.UserDto
+	result := repository.db.Where("email = ?", email).First(&userDto)
+
+	if result.Error == nil {
+		user := userDto.ToEntity()
+		return &user
+	}
+	user := userDto.ToEntity()
+	return &user
 }

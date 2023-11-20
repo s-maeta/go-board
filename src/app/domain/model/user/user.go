@@ -3,13 +3,19 @@ package user
 import (
 	"board/app/domain/model/pre_user"
 	"errors"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	UniqueId UniqueId
-	Name     Name
-	Password Password
-	Email    Email
+	UniqueId  UniqueId
+	Name      Name
+	Password  Password
+	Email     Email
+	UpdatedAt time.Time
+	CreatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 // コンストラクタ

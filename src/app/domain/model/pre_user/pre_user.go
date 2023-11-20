@@ -1,10 +1,19 @@
 package pre_user
 
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
 type PreUser struct {
-	UniqueId UniqueId
-	Email    Email
-	Password Password
-	Token    Token
+	UniqueId  UniqueId
+	Email     Email
+	Password  Password
+	Token     Token
+	UpdatedAt time.Time
+	CreatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 func NewPreUser(
@@ -47,10 +56,10 @@ func CreatePreUser(
 	}
 
 	newPreUser := PreUser{
-		*uniqueId,
-		*email,
-		*password,
-		*token,
+		UniqueId: *uniqueId,
+		Email:    *email,
+		Password: *password,
+		Token:    *token,
 	}
 
 	return &newPreUser, nil

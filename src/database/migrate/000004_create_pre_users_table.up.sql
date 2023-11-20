@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS `pre_users` (
   `created_at` datetime,
   `updated_at` datetime,
   `deleted_at` datetime,
-  PRIMARY KEY (`unique_id`),
+  PRIMARY KEY (`unique_id`)
 )
