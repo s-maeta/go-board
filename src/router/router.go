@@ -21,6 +21,7 @@ func Init() {
 	userRegisterController := *user.NewUserRegisterController()
 	authController := auth.NewLoginController()
 	articleCreateController := article.NewCreateController()
+	articleIndexController := article.NewIndexController()
 
 	//GINのデフォルトバリデーション（go-playground）を独自バリデーションに上書き
 	binding.Validator = service.NewOzzoValidator()
@@ -44,6 +45,10 @@ func Init() {
 			"Accept-Encoding",
 			"Authorization",
 		},
+		// cookieなどの情報を必要とするかどうか
+		AllowCredentials: true,
+		// preflightリクエストの結果をキャッシュする時間
+		// MaxAge: 24 * time.Hour,
 	}))
 
 	//ルーティングがなかった場合のルート
@@ -66,6 +71,7 @@ func Init() {
 	article := router.Group("/article")
 	{
 		article.POST("/create", articleCreateController.Handler)
+		article.GET("/index", articleIndexController.Handler)
 	}
 
 	router.Run(":3001")
