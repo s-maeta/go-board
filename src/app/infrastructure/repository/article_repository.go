@@ -76,3 +76,12 @@ func (repository *ArticleRepository) Delete(article *article.Article) error {
 	}
 	return nil
 }
+
+func (repository *ArticleRepository) Update(article *article.Article) error {
+	articleDto := dto.ConvertModelToDto(article)
+	result := repository.db.Save(articleDto)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}

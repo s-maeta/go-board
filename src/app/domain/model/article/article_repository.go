@@ -7,4 +7,5 @@ type IArticleRepository interface {
 	Index(service.PaginateService) ([]Article, error)
 	Find(articleId UniqueId) (*Article, error)
 	Delete(article *Article) error
+	Update(article *Article) error
 }

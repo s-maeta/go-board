@@ -24,6 +24,7 @@ func Init() {
 	articleIndexController := article.NewIndexController()
 	articleShowController := article.NewShowController()
 	articleDeleteController := article.NewDeleteController()
+	articleUpdateController := article.NewUpdateController()
 
 	//GINのデフォルトバリデーション（go-playground）を独自バリデーションに上書き
 	binding.Validator = service.NewOzzoValidator()
@@ -76,6 +77,7 @@ func Init() {
 		article.GET("/index", articleIndexController.Handler)
 		article.GET("/:id", articleShowController.Handler)
 		article.DELETE("/:id", articleDeleteController.Handler)
+		article.PUT(":id", articleUpdateController.Handler)
 	}
 
 	router.Run(":3001")

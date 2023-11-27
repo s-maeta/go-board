@@ -1,6 +1,8 @@
 package dto
 
-import "board/app/domain/model/article"
+import (
+	"board/app/domain/model/article"
+)
 
 type ArticleDto struct {
 	UniqueId     string `gorm:"primaryKey"`
@@ -23,4 +25,15 @@ func (articleDto *ArticleDto) ToEntity() *article.Article {
 		article.Content(articleDto.Content),
 	)
 	return entity
+}
+
+// DomainModelをDTOに変換
+func ConvertModelToDto(article *article.Article) *ArticleDto {
+	dto := ArticleDto{
+		UniqueId:     string(article.UniqueId),
+		UserUniqueId: article.UserUniqueId,
+		Title:        string(article.Title),
+		Content:      string(article.Content),
+	}
+	return &dto
 }

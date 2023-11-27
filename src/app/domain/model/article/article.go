@@ -58,3 +58,21 @@ func CreateArticle(
 
 	return newArticle, nil
 }
+
+func (article *Article) UpdateTitleAndContent(
+	title string,
+	content string,
+) error {
+	newTitle, err := NewTitle(title)
+	if err != nil {
+		return err
+	}
+	newContent, err := NewContent(content)
+	if err != nil {
+		return err
+	}
+	article.Content = *newContent
+	article.Title = *newTitle
+
+	return nil
+}
